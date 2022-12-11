@@ -65,11 +65,25 @@ import (
 
 func main() {
 	chain := alice.New(firstMiddlewareHandler, secondMiddlewareHandler,
-	nMiddlewareHandler).Then(mainLogicHandler)
-    http.Handle("/some-route", chain)
+		nMiddlewareHandler).Then(mainLogicHandler)
+	http.Handle("/some-route", chain)
 
 }
 ```
+
+### RPC (Remote Procedure Call)
+
+- A Remote Procedure Call (RPC) is an interprocess communication that exchanges information between various distributed
+  systems.
+- **Without implementing the functionality locally**, we can request things from a
+  network that lies in another place or geographical region.
+- The entire process can be broken down into the following steps:
+    - Clients prepare function name and arguments to call
+    - Clients send them to an RPC server by dialing a connection
+    - The RPC server receives the function name and arguments
+    - The server executes the remote process
+    - The server sends back the message to the client
+    - The client collects the data from the response and uses it appropriately
 
 ## Demos
 
