@@ -101,7 +101,7 @@ curl --location --request POST 'localhost:8080/city' \
 ```
 
 _**Response & Logs**_
-![img.png](cmd/resources/images/img.png)
+![img.png](resources/images/img.png)
 
 ```
 Executing middleware before forwarding request to REST API
@@ -124,7 +124,7 @@ curl --location --request POST 'localhost:8080/city' \
 
 _**Response & Logs**_
 
-![img_1.png](cmd/resources/images/img_1.png)
+![img_1.png](resources/images/img_1.png)
 
 ```
 2022/12/11 19:01:22 Entered filterContentType middleware
