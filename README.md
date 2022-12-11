@@ -19,3 +19,32 @@
     - Writing custom logic to scrap the request data
     - Attaching properties to responses before serving the client
 - A middleware, therefore, helps in keeping housekeeping work, like logging and authentication, in its right place.
+
+#### Closures
+
+- A **closure** is a function that returns another function. This is shown below:
+
+```go
+  package main
+
+  import "fmt"
+
+  func main() {
+	numGenerator := generator()
+	for i := 0; i < 5; i++ {
+		fmt.Print(numGenerator(), "\t")
+	}
+  }
+
+  func generator() func() int {
+	var i = 0
+	return func() int {
+		i++
+		return i
+	}
+  }
+```
+
+- The output of the above program would be `1       2       3       4       5   `
+- The principle of closure can also be used to implement a **counter** function and a function that satisfies
+  the `http.Handler` interface 
