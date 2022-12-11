@@ -4,25 +4,40 @@ import (
 	"encoding/json"
 	"fmt"
 	"go-middleware/cmd/models"
+	"log"
 	"net/http"
+	"strconv"
+	"time"
 )
 
 func main() {
 	// HandleFunc returns a HTTP handler
 	coreLogicHandler := http.HandlerFunc(coreLogic)
-	http.Handle("/city", middleware(coreLogicHandler))
+	http.Handle("/city", filterContentType(setServerTimeCookie(coreLogicHandler)))
 	http.ListenAndServe("localhost:8080", nil)
 
 }
 
-// middleware accepts a handler and returns a handler
-func middleware(handler http.Handler) http.Handler {
+// filterContentType is a middleware that filters requests based on content
+func filterContentType(handler http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		fmt.Println("Executing middleware before forwarding request to REST API")
-		// Passes back control to the handler
-		// This allows a handler to execute the handler logic, that is coreLogic
+		log.Println("Entered filterContentType middleware")
+		//Filtering requests by MIME type
+		if r.Header.Get("Content-Type") != "application/json" {
+			w.WriteHeader(http.StatusUnsupportedMediaType)
+			w.Write([]byte("415 - Unsupported Media Type. Only JSON is supported"))
+			return
+		}
 		handler.ServeHTTP(w, r)
-		fmt.Println("Executing middleware before sending REST API response to client")
+	})
+}
+
+func setServerTimeCookie(handler http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		// Sets cookie to each response
+		cookie := http.Cookie{Name: "Server-Time(UTC", Value: strconv.FormatInt(time.Now().Unix(), 10)}
+		http.SetCookie(w, &cookie)
+		log.Println("Currently in the setServerTimeCookie middleware")
 	})
 }
 
