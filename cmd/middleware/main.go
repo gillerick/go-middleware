@@ -3,21 +3,27 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/gorilla/handlers"
+	"github.com/gorilla/mux"
 	"github.com/justinas/alice"
 	"go-middleware/cmd/models"
 	"log"
 	"net/http"
+	"os"
 	"strconv"
 	"time"
 )
 
 func main() {
 	// HandleFunc returns a HTTP handler
+	r := mux.NewRouter()
+	r.HandleFunc("/v2/city", coreLogic)
+	loggedRouter := handlers.LoggingHandler(os.Stdout, r)
 	coreLogicHandler := http.HandlerFunc(coreLogic)
 	// Here, we are using a package to simplify the chaining of handlers
 	chain := alice.New(filterContentType, setServerTimeCookie).Then(coreLogicHandler)
 	http.Handle("/city", chain)
-	http.ListenAndServe("localhost:8080", nil)
+	http.ListenAndServe("localhost:8080", loggedRouter)
 
 }
 
@@ -49,6 +55,7 @@ func coreLogic(w http.ResponseWriter, r *http.Request) {
 	// Business logic goes here
 	// Check if HTTP method is POST
 	if r.Method == "POST" {
+		log.Println("Processing request!")
 		var city models.City
 		decoder := json.NewDecoder(r.Body)
 		err := decoder.Decode(&city)
@@ -60,6 +67,7 @@ func coreLogic(w http.ResponseWriter, r *http.Request) {
 		fmt.Printf("Got %s City with area of %d sq miles!\n", city.Name, city.Area)
 		w.WriteHeader(http.StatusAccepted)
 		w.Write([]byte("201 - Created"))
+		log.Println("Finished processing request")
 	} else {
 		w.WriteHeader(http.StatusMethodNotAllowed)
 		w.Write([]byte("405 - Method Not Allowed"))
