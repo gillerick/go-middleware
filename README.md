@@ -52,3 +52,25 @@ func generator() func() int {
   the `http.Handler` interface
 
 ### Multiple middleware and chaining
+
+## Demos
+
+#### 1. Creating a city
+
+```curl
+curl --location --request POST 'localhost:8080/city' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+    "name": "Nairobi",
+    "area": 696100000
+}'
+```
+
+_**Response & Logs**_
+![img.png](img.png)
+
+```
+Executing middleware before forwarding request to REST API
+Got Nairobi City with area of 696100000 sq miles!
+Executing middleware before sending REST API response to client
+```
