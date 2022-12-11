@@ -57,6 +57,8 @@ func generator() func() int {
 
 #### 1. Creating a city
 
+_**Sample request**_
+
 ```curl
 curl --location --request POST 'localhost:8080/city' \
 --header 'Content-Type: application/json' \
@@ -67,10 +69,35 @@ curl --location --request POST 'localhost:8080/city' \
 ```
 
 _**Response & Logs**_
-![img.png](img.png)
+![img.png](cmd/resources/images/img.png)
 
 ```
 Executing middleware before forwarding request to REST API
 Got Nairobi City with area of 696100000 sq miles!
 Executing middleware before sending REST API response to client
+```
+
+#### 2. Sending a request with unsupported MIME
+
+_**Sample request**_
+
+```curl
+curl --location --request POST 'localhost:8080/city' \
+--header 'Content-Type: text/plain' \
+--data-raw '{
+    "name": "Nairobi",
+    "area": 696100000
+}'
+```
+
+_**Response & Logs**_
+
+![img_1.png](cmd/resources/images/img_1.png)
+
+```
+2022/12/11 19:01:22 Entered filterContentType middleware
+2022/12/11 19:01:22 Currently in the setServerTimeCookie middleware
+2022/12/11 19:01:30 Entered filterContentType middleware
+2022/12/11 19:01:30 Currently in the setServerTimeCookie middleware
+2022/12/11 19:02:04 Entered filterContentType middleware
 ```

@@ -38,6 +38,7 @@ func setServerTimeCookie(handler http.Handler) http.Handler {
 		cookie := http.Cookie{Name: "Server-Time(UTC", Value: strconv.FormatInt(time.Now().Unix(), 10)}
 		http.SetCookie(w, &cookie)
 		log.Println("Currently in the setServerTimeCookie middleware")
+		handler.ServeHTTP(w, r)
 	})
 }
 
