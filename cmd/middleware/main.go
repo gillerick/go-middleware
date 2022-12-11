@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/justinas/alice"
 	"go-middleware/cmd/models"
 	"log"
 	"net/http"
@@ -13,7 +14,9 @@ import (
 func main() {
 	// HandleFunc returns a HTTP handler
 	coreLogicHandler := http.HandlerFunc(coreLogic)
-	http.Handle("/city", filterContentType(setServerTimeCookie(coreLogicHandler)))
+	// Here, we are using a package to simplify the chaining of handlers
+	chain := alice.New(filterContentType, setServerTimeCookie).Then(coreLogicHandler)
+	http.Handle("/city", chain)
 	http.ListenAndServe("localhost:8080", nil)
 
 }

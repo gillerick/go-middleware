@@ -53,6 +53,24 @@ func generator() func() int {
 
 ### Multiple middleware and chaining
 
+- Using a package [Alice](https://github.com/justinas/alice) middleware handlers can be chained in a simple fashion as
+  shown below:
+
+```go
+package main
+
+import (
+	"github.com/justinas/alice"
+)
+
+func main() {
+	chain := alice.New(firstMiddlewareHandler, secondMiddlewareHandler,
+	nMiddlewareHandler).Then(mainLogicHandler)
+    http.Handle("/some-route", chain)
+
+}
+```
+
 ## Demos
 
 #### 1. Creating a city
