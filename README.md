@@ -19,6 +19,8 @@
     - Writing custom logic to scrap the request data
     - Attaching properties to responses before serving the client
 - A middleware, therefore, helps in keeping housekeeping work, like logging and authentication, in its right place.
+- Go web frameworks like [Martini](https://github.com/go-martini/martini) and [Gin](https://github.com/gin-gonic/gin)
+  provide middleware by default
 
 #### Closures
 
@@ -27,24 +29,26 @@
 ```go
   package main
 
-  import "fmt"
+import "fmt"
 
-  func main() {
+func main() {
 	numGenerator := generator()
 	for i := 0; i < 5; i++ {
 		fmt.Print(numGenerator(), "\t")
 	}
-  }
+}
 
-  func generator() func() int {
+func generator() func() int {
 	var i = 0
 	return func() int {
 		i++
 		return i
 	}
-  }
+}
 ```
 
 - The output of the above program would be `1       2       3       4       5   `
 - The principle of closure can also be used to implement a **counter** function and a function that satisfies
-  the `http.Handler` interface 
+  the `http.Handler` interface
+
+### Multiple middleware and chaining
