@@ -8,4 +8,7 @@ require (
 	github.com/justinas/alice v1.2.0
 )
 
-require github.com/felixge/httpsnoop v1.0.1 // indirect
+require (
+	github.com/felixge/httpsnoop v1.0.1 // indirect
+	github.com/gorilla/rpc v1.2.0 // indirect
+)

@@ -1,38 +1,51 @@
 package main
 
 import (
+	"encoding/json"
+	"github.com/gorilla/mux"
+	"github.com/gorilla/rpc"
+	rpcJson "github.com/gorilla/rpc/json"
+	"go-middleware/models"
 	"log"
-	"net"
 	"net/http"
-	"net/rpc"
-	"time"
+	"os"
 )
 
-// Args is a struct that holds information about arguments passed from the RPC client to the server
-// The Args struct here has no fields because this server is not expecting the client to
-// send any arguments
-type Args struct{}
-
-// TimeServer is a struct that shows the object type that the RPC server wishes to export
-type TimeServer int64
+type JSONServer struct{}
 
 func main() {
-	timeserver := new(TimeServer)
 	//Register RPC server
-	rpc.Register(timeserver)
-	rpc.HandleHTTP()
+	s := rpc.NewServer()
+	//Registers the type of data as JSON
+	s.RegisterCodec(rpcJson.NewCodec(), "application/json")
+	s.RegisterService(new(JSONServer), "")
+	r := mux.NewRouter()
+	r.Handle("/rpc", s)
 	// Listen for requests on port 78
-	l, err := net.Listen("tcp", ":78")
-	if err != nil {
-		log.Fatal("listen error:", err)
-	}
-	http.Serve(l, nil)
+	http.ListenAndServe(":78", r)
 }
 
-// GiveServerTime is the function to be called by the RPC client, and returns the current server time
-func (t *TimeServer) GiveServerTime(args *Args, reply *int64) error {
-	// Fill reply pointer to send the data back
-	*reply = time.Now().Unix()
-	return nil
+func (t *JSONServer) GiveBookDetail(r *http.Request, args *models.Args, reply *models.Book) error {
+	var books []models.Book
+	raw, err := os.ReadFile("./books.json")
+	if err != nil {
+		log.Println("error occurred reading books:", err)
+		os.Exit(1)
+	}
 
+	// Unmarshalls JSON raw data into books array
+	err = json.Unmarshal(raw, &books)
+	if err != nil {
+		log.Println("error unmarshalling JSON:", err)
+		os.Exit(1)
+	}
+
+	//Iterates over each book to find the specified book
+	for _, book := range books {
+		if book.Id == args.Id {
+			*reply = book
+			break
+		}
+	}
+	return nil
 }
